@@ -14,27 +14,71 @@
                    FontSize="Large"
                    HorizontalOptions="Center"
                    FontAttributes="Bold"></Label>
-            <Label 
-                   Text="Amount:">
-            </Label>
-            <Entry
-                Text="{Binding Amount, Mode=TwoWay}"
-                Placeholder="Enter the amount to convert...">
-            </Entry>
-            <Label Text="Source rate:">
-            </Label>
-            <Picker
-                ItemsSource="{Binding Rates}"
-                ItemDisplayBinding="{Binding Name}"
-                SelectedItem="{Binding SourceRate, Mode=TwoWay}"
-                Title="Select a source rate..."></Picker>
-            <Label  Text="Tarjet rate:">
-            </Label>
-            <Picker
-                ItemsSource="{Binding Rates}"
-                ItemDisplayBinding="{Binding Name}"
-                SelectedItem="{Binding TargeRate, Mode=TwoWay}"
-                Title="Select a tarjet rate..."></Picker>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label 
+                    Grid.Row="0"
+                    Grid.Column="0"
+                   Text="Amount:"
+                    VerticalOptions="Center">
+                </Label>
+
+                <Entry
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2"
+                    Text="{Binding Amount, Mode=TwoWay}"
+                    Placeholder="Enter the amount to convert...">
+                </Entry>
+
+                <Label 
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    VerticalOptions="Center"
+                    Text="Source rate:">
+                </Label>
+
+                <Picker
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    
+                    ItemsSource="{Binding Rates}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SourceRate, Mode=TwoWay}"
+                    Title="Select a source rate..."></Picker>
+
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    VerticalOptions="Center"
+                    Text="Tarjet rate:">
+                </Label>
+                <Picker
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    ItemsSource="{Binding Rates}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding TargeRate, Mode=TwoWay}"
+                    Title="Select a tarjet rate..."></Picker>
+
+            </Grid>
+            
+            
+            
+           
+            
+            
             <ActivityIndicator IsRunning="{Binding IsRunning, Mode=TwoWay}"></ActivityIndicator>
             <Button 
                 Command="{Binding ConvertCommand}"

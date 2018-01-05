@@ -8,6 +8,9 @@ namespace App3.ViewModels
     using System.Collections.Generic;
     using GalaSoft.MvvmLight.Command;
     using System;
+    using System.Net.Http;
+    using Newtonsoft.Json;
+    using Xamarin.Forms;
 
     public class MainViewModel : INotifyPropertyChanged
     {
@@ -35,7 +38,7 @@ namespace App3.ViewModels
             }
         }
         public Rate SourceRate { get; set; }
-        public Rate TargetRate { get; set; }
+        public Rate TargeRate { get; set; }
         public bool IsRunning
         {
             get
@@ -78,7 +81,7 @@ namespace App3.ViewModels
                 if (_result != value)
                 {
                     _result = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(_result)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Result)));
                 }
             }
         }
@@ -91,20 +94,40 @@ namespace App3.ViewModels
         #endregion
 
         #region Methods
-        void LoadRate()
+        async void LoadRate()
         {
             IsRunning = true;
             Result = "Loading rate...";
 
             try
             {
-                var list = new List<Rate>{
-                         new Rate { RateId = 3, Code="ALL", Name="Albanian Lek", TaxRate=112.78 },
-                         new Rate { RateId = 4, Code = "AMD", Name = "Armenian Dram", TaxRate = 477.815313 },
-                         new Rate { RateId = 5, Code = "ANG", Name = "Netherlands Antillean Guilder", TaxRate = 1.778253 },
-                         new Rate { RateId = 6, Code = "AOA", Name = "Angolan", TaxRate = 165.9205 }};
+                //var list = new List<Rate>{
+                //         new Rate { RateId = 3, Code="ALL", Name="Albanian Lek", TaxRate=112.78 },
+                //         new Rate { RateId = 4, Code = "AMD", Name = "Armenian Dram", TaxRate = 477.815313 },
+                //         new Rate { RateId = 5, Code = "ANG", Name = "Netherlands Antillean Guilder", TaxRate = 1.778253 },
+                //         new Rate { RateId = 6, Code = "AOA", Name = "Angolan", TaxRate = 165.9205 }};
 
-                Rates = new ObservableCollection<Rate>(list);
+
+
+
+                //Rates = new ObservableCollection<Rate>(list);
+
+                var client = new HttpClient();
+                client.BaseAddress = new Uri("http://apiexchangerates.azurewebsites.net");
+                var controller = "/api/Rates";
+                var response = await client.GetAsync(controller);
+                var result = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    IsRunning = false;
+                    Result = result;
+                }
+
+                var rates = JsonConvert.DeserializeObject<List<Rate>>(result);
+
+                Rates = new ObservableCollection<Rate>(rates);
+
                 IsRunning = false;
                 Result = "Ready to convert!";
                 IsEnabled = true;
@@ -119,7 +142,7 @@ namespace App3.ViewModels
 
         #region Commands
 
-        public ICommand ConConvertCommand
+        public ICommand ConvertCommand
         {
             get
             {
@@ -127,9 +150,36 @@ namespace App3.ViewModels
             }
         }
 
-        private void Conver()
+        private async void Conver()
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(Amount))
+            {
+                await Application.Current.MainPage.DisplayAlert("ERROR","You must enter a value in amount","Accept");
+                return;
+            }
+
+            decimal amount = 0;
+
+            if (!decimal.TryParse(Amount, out amount))
+            {
+                await Application.Current.MainPage.DisplayAlert("ERROR", "You must enter a numeric value in amount", "Accept");
+            }
+
+            if (SourceRate == null)
+            {
+                await Application.Current.MainPage.DisplayAlert("ERROR", "You must select a source rate", "Accept");
+                return;
+            }
+
+            if (TargeRate == null)
+            {
+                await Application.Current.MainPage.DisplayAlert("ERROR", "You must select a source TargetRate", "Accept");
+                return;
+            }
+
+            var amountConverted = amount / (decimal)SourceRate.TaxRate * (decimal)TargeRate.TaxRate;
+
+            Result = string.Format("{0} {1} = {2} {3:C2}", SourceRate.Code, amount, TargeRate.Code, amountConverted);
         }
 
         #endregion
