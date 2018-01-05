@@ -22,9 +22,9 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width=".5*"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width=".5*"/>
                 </Grid.ColumnDefinitions>
 
                 <Label 
@@ -72,6 +72,19 @@
                     SelectedItem="{Binding TargeRate, Mode=TwoWay}"
                     Title="Select a tarjet rate..."></Picker>
 
+                <Image
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Grid.RowSpan="2"
+                    HeightRequest="40"
+                    WidthRequest="40"
+                    Source="change.png">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SwithCommand}">
+                        </TapGestureRecognizer>
+                    </Image.GestureRecognizers>
+                </Image>
+                
             </Grid>
             
             

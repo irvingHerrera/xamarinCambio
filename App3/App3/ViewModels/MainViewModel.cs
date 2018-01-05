@@ -20,6 +20,8 @@ namespace App3.ViewModels
         bool _isEnable;
         string _result;
         ObservableCollection<Rate> _rates;
+        Rate _sourceRate;
+        Rate _targeRate;
 
         public string Amount { get; set; }
         public ObservableCollection<Rate> Rates
@@ -37,8 +39,36 @@ namespace App3.ViewModels
                 }
             }
         }
-        public Rate SourceRate { get; set; }
-        public Rate TargeRate { get; set; }
+        public Rate SourceRate
+        {
+            get
+            {
+                return _sourceRate;
+            }
+            set
+            {
+                if (_sourceRate != value)
+                {
+                    _sourceRate = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SourceRate)));
+                }
+            }
+        }
+        public Rate TargeRate
+        {
+            get
+            {
+                return _targeRate;
+            }
+            set
+            {
+                if (_targeRate != value)
+                {
+                    _targeRate = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TargeRate)));
+                }
+            }
+        }
         public bool IsRunning
         {
             get
@@ -101,16 +131,6 @@ namespace App3.ViewModels
 
             try
             {
-                //var list = new List<Rate>{
-                //         new Rate { RateId = 3, Code="ALL", Name="Albanian Lek", TaxRate=112.78 },
-                //         new Rate { RateId = 4, Code = "AMD", Name = "Armenian Dram", TaxRate = 477.815313 },
-                //         new Rate { RateId = 5, Code = "ANG", Name = "Netherlands Antillean Guilder", TaxRate = 1.778253 },
-                //         new Rate { RateId = 6, Code = "AOA", Name = "Angolan", TaxRate = 165.9205 }};
-
-
-
-
-                //Rates = new ObservableCollection<Rate>(list);
 
                 var client = new HttpClient();
                 client.BaseAddress = new Uri("http://apiexchangerates.azurewebsites.net");
@@ -148,6 +168,22 @@ namespace App3.ViewModels
             {
                 return new RelayCommand(Conver);
             }
+        }
+
+        public ICommand SwithCommand
+        {
+            get
+            {
+                return new RelayCommand(Swith);
+            }
+        }
+
+        private void Swith()
+        {
+            var aux = SourceRate;
+            SourceRate = TargeRate;
+            TargeRate = aux;
+            Conver();
         }
 
         private async void Conver()
