@@ -6,6 +6,8 @@ namespace App3.ViewModels
     using System.Windows.Input;
     using System.ComponentModel;
     using System.Collections.Generic;
+    using GalaSoft.MvvmLight.Command;
+    using System;
 
     public class MainViewModel : INotifyPropertyChanged
     {
@@ -117,13 +119,18 @@ namespace App3.ViewModels
 
         #region Commands
 
-        /*public ICommand ConConvertCommand
+        public ICommand ConConvertCommand
         {
             get
             {
                 return new RelayCommand(Conver);
             }
-        }*/
+        }
+
+        private void Conver()
+        {
+            throw new NotImplementedException();
+        }
 
         #endregion
     }
