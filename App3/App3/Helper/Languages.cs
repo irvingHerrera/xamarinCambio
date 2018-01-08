@@ -18,7 +18,7 @@ namespace App3.Helper
 
         public static string Tile
         {
-            get { return Resource.Tile; }
+            get { return Resource.Title; }
         }
 
         public static string Accept

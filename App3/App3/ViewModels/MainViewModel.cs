@@ -11,6 +11,7 @@ namespace App3.ViewModels
     using System.Net.Http;
     using Newtonsoft.Json;
     using Xamarin.Forms;
+    using App3.Helper;
 
     public class MainViewModel : INotifyPropertyChanged
     {
@@ -190,7 +191,7 @@ namespace App3.ViewModels
         {
             if (string.IsNullOrEmpty(Amount))
             {
-                await Application.Current.MainPage.DisplayAlert("ERROR","You must enter a value in amount","Accept");
+                await Application.Current.MainPage.DisplayAlert(Languages.Error, Languages.AmountValidation, Languages.Accept);
                 return;
             }
 
@@ -198,7 +199,7 @@ namespace App3.ViewModels
 
             if (!decimal.TryParse(Amount, out amount))
             {
-                await Application.Current.MainPage.DisplayAlert("ERROR", "You must enter a numeric value in amount", "Accept");
+                await Application.Current.MainPage.DisplayAlert(Languages.Error, "You must enter a numeric value in amount", Languages.Accept);
             }
 
             if (SourceRate == null)

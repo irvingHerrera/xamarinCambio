@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:hola="clr-namespace:App3.Helper"
              x:Class="App3.Views.MainView"
              BindingContext="{Binding Main, Source={StaticResource Locator}}">
     <ContentPage.Padding>
@@ -10,7 +11,7 @@
     </ContentPage.Padding>
     <ContentPage.Content>
         <StackLayout Padding="20,30,20,10">
-            <Label Text="Foreing Exchange"
+            <Label Text="{hola:Translate Title}"
                    FontSize="Large"
                    HorizontalOptions="Center"
                    FontAttributes="Bold"></Label>

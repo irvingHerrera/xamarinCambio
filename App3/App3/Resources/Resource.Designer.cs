@@ -90,9 +90,9 @@ namespace App3.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Foreing Exchange.
         /// </summary>
-        public static string Tile {
+        public static string Title {
             get {
-                return ResourceManager.GetString("Tile", resourceCulture);
+                return ResourceManager.GetString("Title", resourceCulture);
             }
         }
     }
