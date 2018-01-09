@@ -23,6 +23,11 @@ namespace App3.ViewModels
         ObservableCollection<Rate> _rates;
         Rate _sourceRate;
         Rate _targeRate;
+        string _status;
+
+        #region Service
+        ApiService service;
+        #endregion
 
         public string Amount { get; set; }
         public ObservableCollection<Rate> Rates
@@ -117,9 +122,26 @@ namespace App3.ViewModels
             }
         }
 
+        public string Status
+        {
+            get
+            {
+                return _status;
+            }
+            set
+            {
+                if (_status != value)
+                {
+                    _status = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Status)));
+                }
+            }
+        }
+
         #region Constructors
         public MainViewModel()
         {
+            service = new ApiService();
             LoadRate();
         }
         #endregion
@@ -130,33 +152,11 @@ namespace App3.ViewModels
             IsRunning = true;
             Result = "Loading rate...";
 
-            try
+            var response = await service.GetList<Rate>("http://apiexchangerates.azurewebsites.net", "/api/Rates");
+
+            if (!response.IsSuccess)
             {
-
-                var client = new HttpClient();
-                client.BaseAddress = new Uri("http://apiexchangerates.azurewebsites.net");
-                var controller = "/api/Rates";
-                var response = await client.GetAsync(controller);
-                var result = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    IsRunning = false;
-                    Result = result;
-                }
-
-                var rates = JsonConvert.DeserializeObject<List<Rate>>(result);
-
-                Rates = new ObservableCollection<Rate>(rates);
-
-                IsRunning = false;
-                Result = "Ready to convert!";
-                IsEnabled = true;
-            }
-            catch (System.Exception ex)
-            {
-                IsRunning = false;
-                Result = ex.Message;
+               
             }
         }
         #endregion
