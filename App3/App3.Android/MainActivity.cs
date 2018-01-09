@@ -7,8 +7,10 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 
+[assembly: UsesFeature("android.hardware.wifi", Required = false)]
 namespace App3.Droid
 {
+    
     [Activity(Label = "App3", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {

@@ -152,12 +152,29 @@ namespace App3.ViewModels
             IsRunning = true;
             Result = "Loading rate...";
 
+            var connection = await service.CheckConnection();
+
+            if (!connection.IsSuccess)
+            {
+                IsRunning = false;
+                Result = connection.Message;
+                return;
+            }
+
             var response = await service.GetList<Rate>("http://apiexchangerates.azurewebsites.net", "/api/Rates");
 
             if (!response.IsSuccess)
             {
-               
+                IsRunning = false;
+                Result = response.Message;
+                return;
             }
+
+            Rates = new ObservableCollection<Rate>((List<Rate>)response.Result);
+            IsRunning = false;
+            IsEnabled = true;
+            Result = "Ready to convert!";
+            Status = "Rates loaded from internet";
         }
         #endregion
 
