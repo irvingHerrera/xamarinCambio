@@ -50,12 +50,14 @@
 	<string>LaunchScreen</string>
 	<key>CFBundleName</key>
 	<string>App3</string>
-		<key>CFBundleLocalization</key>
+	<key>CFBundleLocalization</key>
 	<array>
 		<string>es</string>
 		<string>pt</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>XSLaunchImageAssets</key>
+	<string>Resources/Media.xcassets/LaunchImages.launchimage</string>
 </dict>
 </plist>
