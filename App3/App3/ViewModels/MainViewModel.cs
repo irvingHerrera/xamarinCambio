@@ -12,6 +12,8 @@ namespace App3.ViewModels
     using Newtonsoft.Json;
     using Xamarin.Forms;
     using App3.Helper;
+    using App3.Services;
+    using System.Threading.Tasks;
 
     public class MainViewModel : INotifyPropertyChanged
     {
@@ -24,9 +26,12 @@ namespace App3.ViewModels
         Rate _sourceRate;
         Rate _targeRate;
         string _status;
+        List<Rate> rates;
 
         #region Service
         ApiService service;
+        DataService dataService;
+        DialogService dialogService;
         #endregion
 
         public string Amount { get; set; }
@@ -142,6 +147,8 @@ namespace App3.ViewModels
         public MainViewModel()
         {
             service = new ApiService();
+            dialogService = new DialogService();
+            dataService = new DataService();
             LoadRate();
         }
         #endregion
@@ -156,25 +163,56 @@ namespace App3.ViewModels
 
             if (!connection.IsSuccess)
             {
+                LoadLocalData();
+            }
+            else
+            {
+                await LoadDataFromAPI();
+
+            }
+
+            if (rates.Count == 0)
+            {
                 IsRunning = false;
-                Result = connection.Message;
+                IsEnabled = false;
+                Result = "There are not intenet connection and not load previously rates. " +
+                         "Please try again with internet connection.";
+
                 return;
             }
+            
+            Rates = new ObservableCollection<Rate>(rates);
+
+            IsRunning = false;
+            IsEnabled = true;
+            Result = "Ready to convert!";
+        }
+
+        private async Task LoadDataFromAPI()
+        {
+            var url = Application.Current.Resources["URLAPI"].ToString();
 
             var response = await service.GetList<Rate>("http://apiexchangerates.azurewebsites.net", "/api/Rates");
 
             if (!response.IsSuccess)
             {
-                IsRunning = false;
-                Result = response.Message;
+                LoadLocalData();
                 return;
             }
 
-            Rates = new ObservableCollection<Rate>((List<Rate>)response.Result);
-            IsRunning = false;
-            IsEnabled = true;
-            Result = "Ready to convert!";
-            Status = "Rates loaded from internet";
+            rates = (List<Rate>)response.Result;
+
+            dataService.DeleteAll<Rate>();
+            dataService.Save(rates);
+
+            Status = "Rates loader from Internet";
+        }
+
+        private void LoadLocalData()
+        {
+            rates = dataService.Get<Rate>(false);
+
+            Status = "Rates loader from local date";
         }
         #endregion
 
@@ -216,18 +254,18 @@ namespace App3.ViewModels
 
             if (!decimal.TryParse(Amount, out amount))
             {
-                await Application.Current.MainPage.DisplayAlert(Languages.Error, "You must enter a numeric value in amount", Languages.Accept);
+                await dialogService.ShowMessage(Languages.Error, "You must enter a numeric value in amount");
             }
 
             if (SourceRate == null)
             {
-                await Application.Current.MainPage.DisplayAlert("ERROR", "You must select a source rate", "Accept");
+                await dialogService.ShowMessage(Languages.Error, "You must select a source rate");
                 return;
             }
 
             if (TargeRate == null)
             {
-                await Application.Current.MainPage.DisplayAlert("ERROR", "You must select a source TargetRate", "Accept");
+                await dialogService.ShowMessage(Languages.Error, "You must select a source TargetRate");
                 return;
             }
 
